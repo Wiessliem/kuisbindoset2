@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan Belajar UAS — Struktur Data &amp; Algoritma</title>
+<style>
+:root{
+  --bg:#eef1f6; --paper:#ffffff; --ink:#18203a; --muted:#5b6478;
+  --accent:#4338ca; --accent-deep:#312e81; --accent-soft:#eef0ff; --line:#dde2ec;
+  --pointer:#e8590c; --pointer-soft:#fff1e6;
+  --term-bg:#111827; --term-text:#e5e7eb;
+  --ok:#15803d; --ok-soft:#e8f7ee; --err:#b91c1c; --err-soft:#fdecec;
+  --warn-soft:#fff8e1; --warn-line:#f0c948;
+  --mono:"Cascadia Code","JetBrains Mono",Consolas,"Courier New",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65}
+
+/* ===== Header ===== */
+header{background:linear-gradient(135deg,var(--accent-deep) 0%,#1f1b5e 55%,#15123f 100%);color:#fff;padding:34px 18px 26px;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:#b9b4ff;margin-bottom:10px}
+header h1{font-size:clamp(1.5rem,4vw,2.3rem);font-weight:800;letter-spacing:-.02em}
+header p.sub{color:#cfd2ff;margin-top:8px;font-size:.95rem;max-width:720px;margin-left:auto;margin-right:auto}
+.chain{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px;margin-top:18px}
+.chain .node{display:inline-flex;align-items:stretch;border:1px solid rgba(255,255,255,.45);border-radius:7px;overflow:hidden;font-family:var(--mono);font-size:.8rem;background:rgba(255,255,255,.08)}
+.chain .node .v{padding:3px 8px}
+.chain .node .p{padding:3px 7px;border-left:1px solid rgba(255,255,255,.35);color:#ffd9a8}
+.chain .arrow{color:#ffd9a8;font-family:var(--mono);padding:0 3px;font-size:.85rem}
+.chain .nul{font-family:var(--mono);font-size:.78rem;color:#9aa0d9;padding-left:4px}
+.chain-label{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:#9aa0d9;margin-top:10px;text-transform:uppercase}
+
+/* ===== Nav ===== */
+nav{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:2px solid var(--line);box-shadow:0 2px 10px rgba(24,32,58,.06)}
+.tabs{display:flex;overflow-x:auto;max-width:1080px;margin:0 auto;scrollbar-width:thin}
+.tab-btn{flex:0 0 auto;border:none;background:none;font-family:var(--mono);font-size:.8rem;padding:13px 14px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab-btn:hover{color:var(--accent)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--pointer);font-weight:700}
+.tab-btn:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* ===== Layout ===== */
+main{max-width:1080px;margin:0 auto;padding:26px 16px 70px}
+.panel{display:none;animation:fade .25s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panel{animation:none}}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:18px}
+.card h2{font-size:1.25rem;font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
+.card h3{font-size:1rem;font-weight:700;color:var(--accent-deep);margin:18px 0 6px}
+.card p{margin:8px 0;color:#2a3147}
+.kicker{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pointer);margin-bottom:6px}
+ul.poin{margin:8px 0 8px 20px}
+ul.poin li{margin:6px 0;color:#2a3147}
+strong{color:var(--ink)}
+code{font-family:var(--mono);font-size:.85em;background:var(--accent-soft);color:var(--accent-deep);padding:1px 5px;border-radius:4px}
+
+pre.code{font-family:var(--mono);font-size:.82rem;line-height:1.55;background:#f7f8fc;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:10px 0}
+pre.code .cm{color:#7a86a3}
+pre.term{font-family:var(--mono);font-size:.82rem;line-height:1.6;background:var(--term-bg);color:var(--term-text);border-radius:8px;padding:12px 16px;overflow-x:auto;margin:10px 0}
+.term .lbl{color:#93c5fd}
+
+.note{background:var(--warn-soft);border:1px solid var(--warn-line);border-left-width:4px;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:.92rem}
+.note b{color:#7a5a00}
+.tip{background:var(--ok-soft);border:1px solid #bfe6cd;border-left:4px solid var(--ok);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:.92rem}
+
+table.tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem}
+table.tbl th{background:var(--accent-soft);color:var(--accent-deep);text-align:left;padding:9px 12px;border:1px solid var(--line);font-size:.82rem}
+table.tbl td{padding:8px 12px;border:1px solid var(--line);vertical-align:top}
+table.tbl td.mono, table.tbl th.mono{font-family:var(--mono);font-size:.82rem}
+
+.mchain{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:10px 0;font-family:var(--mono);font-size:.8rem}
+.mchain .nd{display:inline-flex;border:1.5px solid var(--accent);border-radius:6px;overflow:hidden;background:#fff}
+.mchain .nd .v{padding:2px 8px;color:var(--ink)}
+.mchain .nd .p{padding:2px 6px;border-left:1px solid var(--accent);color:var(--pointer);background:var(--pointer-soft)}
+.mchain .ar{color:var(--pointer);padding:0 3px}
+.mchain .nul{color:var(--muted);padding-left:4px}
+.mchain .hd{color:var(--accent-deep);font-weight:700;padding-right:6px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+/* ===== Kuis ===== */
+.quiz-top{position:sticky;top:49px;z-index:40;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 3px 12px rgba(24,32,58,.07)}
+.quiz-top .score{font-family:var(--mono);font-size:.95rem;font-weight:700;color:var(--accent-deep)}
+.quiz-top .bar{flex:1 1 200px;height:9px;background:var(--line);border-radius:6px;overflow:hidden;min-width:140px}
+.quiz-top .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--pointer));transition:width .25s}
+.btn-reset{font-family:var(--mono);font-size:.8rem;border:1.5px solid var(--accent);color:var(--accent);background:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-weight:700}
+.btn-reset:hover{background:var(--accent-soft)}
+.q-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.q-card .q-no{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;color:var(--pointer);text-transform:uppercase;margin-bottom:4px}
+.q-card .q-txt{font-weight:600;margin-bottom:12px}
+.q-card .q-txt code{font-weight:500}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:1.5px solid var(--line);background:#fbfcfe;border-radius:9px;padding:10px 13px;margin:7px 0;cursor:pointer;font-size:.92rem;font-family:var(--sans);color:var(--ink);transition:border-color .12s,background .12s}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt:disabled{cursor:default}
+.opt .L{font-family:var(--mono);font-weight:700;color:var(--accent-deep);flex:0 0 auto}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--err);background:var(--err-soft)}
+.opt.dim{opacity:.55}
+.feedback{display:none;margin-top:10px;border-radius:9px;padding:11px 14px;font-size:.9rem}
+.feedback.show{display:block}
+.feedback.good{background:var(--ok-soft);border:1px solid #bfe6cd;color:#14532d}
+.feedback.bad{background:var(--err-soft);border:1px solid #f3c2c2;color:#7f1d1d}
+.final{display:none;background:linear-gradient(135deg,var(--accent-deep),#1f1b5e);color:#fff;border-radius:12px;padding:24px;text-align:center;margin-top:20px}
+.final.show{display:block}
+.final .big{font-family:var(--mono);font-size:2.1rem;font-weight:800}
+footer{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--muted);padding:20px;letter-spacing:.08em}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Panduan Belajar &middot; Persiapan UAS</div>
+  <h1>Struktur Data &amp; Algoritma</h1>
+  <p class="sub">Linked List &middot; Stack &middot; Queue &middot; Binary Search Tree &middot; Delete by Copying/Merging — disusun dari Latihan UAS &amp; Kumpulan Contoh Program (Python)</p>
+  <div class="chain" aria-hidden="true">
+    <span class="node"><span class="v">50</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">93</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">36</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">72</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">78</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">100</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">85</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">18</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">25</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="node"><span class="v">38</span><span class="p">&#9679;</span></span><span class="arrow">&#8594;</span>
+    <span class="nul">None</span>
+  </div>
+  <div class="chain-label">data utama latihan uas: [50, 93, 36, 72, 78, 100, 85, 18, 25, 38]</div>
+</header>
+
+<nav>
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="t0">Ringkasan</button>
+    <button class="tab-btn" data-tab="t1">Single LL</button>
+    <button class="tab-btn" data-tab="t2">Double LL</button>
+    <button class="tab-btn" data-tab="t3">Circular LL</button>
+    <button class="tab-btn" data-tab="t4">Stack</button>
+    <button class="tab-btn" data-tab="t5">Queue</button>
+    <button class="tab-btn" data-tab="t6">BST &amp; Traversal</button>
+    <button class="tab-btn" data-tab="t7">Delete BST</button>
+    <button class="tab-btn" data-tab="t8">Pembahasan UAS</button>
+    <button class="tab-btn" data-tab="t9">Kuis 50 Soal</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================= TAB 0 : RINGKASAN ================= -->
+<section class="panel active" id="t0">
+  <div class="card">
+    <div class="kicker">Peta Materi</div>
+    <h2>Apa yang Diujikan di UAS?</h2>
+    <p>Seluruh soal Latihan UAS memakai <strong>satu data yang sama</strong>: <code>[50, 93, 36, 72, 78, 100, 85, 18, 25, 38]</code>. Yang diuji adalah kemampuanmu <strong>membangun struktur data dari array</strong> lalu <strong>memanipulasinya</strong> (hapus, sisip, pindah antar struktur) dan <strong>menelusuri hasilnya</strong>.</p>
+    <table class="tbl">
+      <tr><th>No. Soal</th><th>Topik</th><th>Operasi kunci yang diuji</th></tr>
+      <tr><td class="mono">1</td><td>Single Linked List</td><td>bangun dari array, hapus (head/tengah/tail), sisip sebelum/sesudah/di antara</td></tr>
+      <tr><td class="mono">2</td><td>Double Linked List</td><td>operasi sama, tapi memanfaatkan <code>prevNode</code> dan <code>maju=False</code></td></tr>
+      <tr><td class="mono">3</td><td>Circular Linked List</td><td>operasi sama, kondisi berhenti <code>nextNode == head</code></td></tr>
+      <tr><td class="mono">4</td><td>Queue (array)</td><td>pisah ganjil/genap, deQueue + jumlahkan + enQueue, pindahkan antar queue</td></tr>
+      <tr><td class="mono">5</td><td>Stack (array)</td><td>pisah kelipatan 2, pop + jumlahkan + push, pindahkan antar stack</td></tr>
+      <tr><td class="mono">6</td><td>Binary Search Tree</td><td>bangun BST, traversal in/pre/post-order, delete by merging &amp; copying</td></tr>
+      <tr><td class="mono">7</td><td>Kombinasi bebas</td><td>pisah kuadrat sempurna (descending) vs bukan (ascending)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Konsep Inti</div>
+    <h2>Perbandingan Cepat Semua Struktur</h2>
+    <table class="tbl">
+      <tr><th>Struktur</th><th>Prinsip</th><th>Penanda penting</th><th>Operasi utama</th></tr>
+      <tr><td><strong>Single LL</strong></td><td>rantai satu arah</td><td class="mono">head, ptr, nextNode</td><td class="mono">tambah, telusuri, hapus</td></tr>
+      <tr><td><strong>Double LL</strong></td><td>rantai dua arah</td><td class="mono">nextNode + prevNode</td><td class="mono">tambah(el, maju), hapus</td></tr>
+      <tr><td><strong>Circular LL</strong></td><td>tail kembali ke head</td><td class="mono">tail.nextNode == head</td><td class="mono">tambah, telusuri, hapus</td></tr>
+      <tr><td><strong>Stack</strong></td><td>LIFO — terakhir masuk, pertama keluar</td><td class="mono">top (kosong: top == -1)</td><td class="mono">push, pop, topEl</td></tr>
+      <tr><td><strong>Queue</strong></td><td>FIFO — pertama masuk, pertama keluar</td><td class="mono">first &amp; last (kosong: first == -1)</td><td class="mono">enQueue, deQueue, firstEl</td></tr>
+      <tr><td><strong>BST</strong></td><td>kiri &lt; simpul &le; kanan</td><td class="mono">root, left, right, induk</td><td class="mono">tambah, traversal, hapusSimpul</td></tr>
+    </table>
+    <div class="tip"><strong>Cara pakai panduan ini:</strong> pelajari tab per topik &rarr; kerjakan ulang trace di tab <strong>Pembahasan UAS</strong> dengan tangan (tanpa melihat) &rarr; uji diri dengan <strong>Kuis 50 Soal</strong>. Target aman: skor &ge; 40/50.</div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Strategi</div>
+    <h2>5 Jebakan yang Paling Sering Muncul</h2>
+    <ul class="poin">
+      <li><strong>Lupa mengarahkan <code>ptr</code> sebelum <code>tambah()</code></strong> — pada kode dosen, sisip selalu terjadi <em>setelah</em> simpul yang ditunjuk <code>ptr</code>. Salah arah = salah posisi.</li>
+      <li><strong>Menghapus head</strong> — head harus dipindahkan dulu ke simpul berikutnya; di DLL jangan lupa set <code>head.prevNode = None</code>.</li>
+      <li><strong>Kondisi berhenti traversal</strong> — single/double: <code>nextNode == None</code>; circular: <code>nextNode == head</code>. Tertukar = infinite loop.</li>
+      <li><strong>Urutan tampil stack vs urutan push</strong> — stack ditampilkan dari <em>top</em>, jadi urutannya <strong>terbalik</strong> dari urutan push. Queue tampil sesuai urutan masuk.</li>
+      <li><strong>Delete by copying vs merging</strong> — <em>copying</em>: nilai suksesor <strong>disalin</strong> ke simpul (struktur hampir tidak berubah). <em>Merging</em>: anak kanan <strong>menggantikan</strong> simpul dan anak kiri "dicangkok" ke suksesor (struktur berubah besar).</li>
+    </ul>
+  </div>
+</section>
+<!-- ================= TAB 1 : SINGLE LINKED LIST ================= -->
+<section class="panel" id="t1">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Single Linked List</h2>
+    <p>Rantai simpul <strong>satu arah</strong>. Setiap simpul menyimpan dua hal: <code>element</code> (data) dan <code>nextNode</code> (alamat simpul berikutnya). Posisi pertama dipegang oleh <code>head</code>; simpul terakhir punya <code>nextNode = None</code>.</p>
+    <div class="mchain"><span class="hd">head &#8594;</span><span class="nd"><span class="v">50</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">93</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">36</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">...</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">38</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nul">None</span></div>
+    <ul class="poin">
+      <li><strong>Kosong</strong> jika <code>head == None</code>.</li>
+      <li>Hanya bisa ditelusuri <strong>maju</strong> — tidak ada jalan kembali ke simpul sebelumnya.</li>
+      <li><code>ptr</code> adalah "jari penunjuk" — semua operasi sisip terjadi <strong>setelah simpul yang ditunjuk ptr</strong>.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>Tiga Method Wajib Hafal</h2>
+    <h3>1. tambah(element) — sisip setelah ptr</h3>
+    <pre class="code">def tambah(self, element):
+    baru = self.simpulLL(element)
+    if self.head == None:
+        self.head = baru          <span class="cm"># simpul pertama</span>
+    else:
+        baru.nextNode = self.ptr.nextNode   <span class="cm"># 1) baru menunjuk penerus ptr</span>
+        self.ptr.nextNode = baru            <span class="cm"># 2) ptr menunjuk baru</span></pre>
+    <div class="note"><b>Urutan tidak boleh dibalik!</b> Jika <code>ptr.nextNode = baru</code> dijalankan dulu, alamat penerus lama <strong>hilang</strong> dan sisa rantai terputus.</div>
+    <h3>2. telusuri(cari) — mencari simpul</h3>
+    <pre class="code">def telusuri(self, cari):
+    if self.head == None: return None
+    tmp = self.head
+    while tmp.element != cari:
+        tmp = tmp.nextNode
+        if tmp == None: return None   <span class="cm"># sampai ujung, tidak ketemu</span>
+    return tmp</pre>
+    <h3>3. hapus(cari) — arahkan ptr ke simpul SEBELUM target</h3>
+    <pre class="code">def hapus(self, cari):
+    temp = self.telusuri(cari)        <span class="cm"># target yang akan dihapus</span>
+    self.ptr = self.head
+    while self.ptr.nextNode != temp:  <span class="cm"># cari simpul sebelum target</span>
+        self.ptr = self.ptr.nextNode
+    if self.head == temp:
+        self.head = self.head.nextNode      <span class="cm"># kasus hapus head</span>
+    self.ptr.nextNode = self.ptr.nextNode.nextNode  <span class="cm"># lompati target</span>
+    del temp</pre>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Pola Soal</div>
+    <h2>Membangun LL dari Array (Soal 1A)</h2>
+    <pre class="code">data = [50, 93, 36, 72, 78, 100, 85, 18, 25, 38]
+LL1 = singleLL()
+for i in range(len(data)):
+    LL1.tambah(data[i])
+    if i == 0:
+        LL1.ptr = LL1.head        <span class="cm"># setelah simpul pertama</span>
+    else:
+        LL1.ptr = LL1.ptr.nextNode  <span class="cm"># ptr selalu ikut ke simpul terbaru</span></pre>
+    <h3>Menampilkan isi</h3>
+    <pre class="code">tmp = LL1.head
+hasil = []
+while tmp != None:
+    hasil.append(tmp.element)
+    tmp = tmp.nextNode
+print(hasil)</pre>
+    <h3>Resep sisip untuk soal E, F, G</h3>
+    <table class="tbl">
+      <tr><th>Perintah</th><th>Resep di single LL</th></tr>
+      <tr><td>Tambah 69 <strong>sebelum</strong> 93</td><td>telusuri simpul <em>sebelum</em> 93 (yaitu head=... setelah 50 dihapus, 93 jadi head &rarr; sisip sebagai <strong>head baru</strong>: <code>baru.nextNode = head; head = baru</code>)</td></tr>
+      <tr><td>Tambah 1 <strong>setelah</strong> 25</td><td><code>ptr = telusuri(25)</code> lalu <code>tambah(1)</code></td></tr>
+      <tr><td>Tambah 67 <strong>di antara</strong> 100 dan 85</td><td><code>ptr = telusuri(100)</code> lalu <code>tambah(67)</code> — sama saja dengan "setelah 100"</td></tr>
+    </table>
+    <div class="tip"><strong>Inti ujian:</strong> kalimat "sebelum X", "setelah X", "di antara X dan Y" semuanya diterjemahkan menjadi satu hal: <em>ke simpul mana ptr harus diarahkan</em>. Sisip selalu jatuh tepat setelah ptr.</div>
+  </div>
+</section>
+
+<!-- ================= TAB 2 : DOUBLE LINKED LIST ================= -->
+<section class="panel" id="t2">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Double Linked List</h2>
+    <p>Setiap simpul punya <strong>dua pointer</strong>: <code>nextNode</code> (maju) dan <code>prevNode</code> (mundur). Akibatnya rantai bisa ditelusuri <strong>dua arah</strong>, dan menyisip <em>sebelum</em> sebuah simpul jadi mudah — tidak perlu mencari simpul sebelumnya secara manual.</p>
+    <div class="mchain"><span class="hd">head &#8594;</span><span class="nul">None</span><span class="ar">&#8592;</span><span class="nd"><span class="p">&#9679;</span><span class="v">50</span><span class="p">&#9679;</span></span><span class="ar">&#8644;</span><span class="nd"><span class="p">&#9679;</span><span class="v">93</span><span class="p">&#9679;</span></span><span class="ar">&#8644;</span><span class="nd"><span class="p">&#9679;</span><span class="v">36</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nul">...</span></div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>tambah(element, maju=True/False)</h2>
+    <p>Inilah pembeda terbesar dari single LL: parameter <code>maju</code> menentukan arah sisip terhadap <code>ptr</code>.</p>
+    <pre class="code">def tambah(self, element, maju=True):
+    baru = self.simpulLL(element)
+    if self.head == None:
+        self.head = baru
+    elif maju:                       <span class="cm"># sisip SETELAH ptr (4 pointer diatur)</span>
+        baru.nextNode = self.ptr.nextNode
+        baru.prevNode = self.ptr
+        if self.ptr.nextNode != None:
+            self.ptr.nextNode.prevNode = baru
+        self.ptr.nextNode = baru
+    else:                            <span class="cm"># maju=False: sisip SEBELUM ptr</span>
+        baru.prevNode = self.ptr.prevNode
+        baru.nextNode = self.ptr
+        if self.ptr.prevNode != None:
+            self.ptr.prevNode.nextNode = baru
+        self.ptr.prevNode = baru</pre>
+    <div class="note"><b>Hitung pointernya:</b> sisip di tengah DLL selalu memperbarui <strong>4 pointer</strong> — <code>next</code> &amp; <code>prev</code> milik simpul baru, plus 1 pointer dari simpul kiri dan 1 dari simpul kanan.</div>
+    <h3>hapus(cari) — manfaatkan prevNode</h3>
+    <pre class="code">def hapus(self, cari):
+    self.ptr = self.telusuri(cari)
+    if self.ptr == self.head:                 <span class="cm"># kasus head</span>
+        self.head = self.head.nextNode
+        if self.head != None:
+            self.head.prevNode = None
+    else:
+        if self.ptr.nextNode != None:         <span class="cm"># sambungkan kanan ke kiri</span>
+            self.ptr.nextNode.prevNode = self.ptr.prevNode
+        if self.ptr.prevNode != None:         <span class="cm"># sambungkan kiri ke kanan</span>
+            self.ptr.prevNode.nextNode = self.ptr.nextNode
+    del self.ptr</pre>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Pola Soal</div>
+    <h2>Keunggulan DLL di Soal 2E (sisip "sebelum 93")</h2>
+    <pre class="code">LL1.ptr = LL1.telusuri(93)
+if LL1.ptr != None:
+    LL1.tambah(69, False)    <span class="cm"># maju=False = langsung sisip sebelum 93</span>
+if LL1.ptr == LL1.head.nextNode... <span class="cm"># catatan: jika 93 adalah head,</span>
+<span class="cm"># jangan lupa pindahkan head: if baru.prevNode == None: head = baru</span></pre>
+    <p>Di single LL kamu harus menelusuri manual simpul sebelum 93; di DLL cukup <code>maju=False</code>. Soal 2F dan 2G tetap memakai <code>maju=True</code> (sisip setelah 25, dan setelah 100).</p>
+    <div class="tip"><strong>Pengingat hasil:</strong> isi list soal 2 identik dengan soal 1 di setiap langkah — yang dinilai adalah <em>cara</em> (struktur dan pointer), bukan angka akhirnya saja.</div>
+  </div>
+</section>
+
+<!-- ================= TAB 3 : CIRCULAR LINKED LIST ================= -->
+<section class="panel" id="t3">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Circular Linked List</h2>
+    <p>Sama seperti single LL, tetapi simpul terakhir <strong>tidak menunjuk None</strong> — ia kembali menunjuk <code>head</code>. Rantai menjadi lingkaran tanpa "ujung".</p>
+    <div class="mchain"><span class="hd">head &#8594;</span><span class="nd"><span class="v">50</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">93</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">...</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="nd"><span class="v">38</span><span class="p">&#9679;</span></span><span class="ar">&#8594;</span><span class="hd">kembali ke head &#8634;</span></div>
+    <ul class="poin">
+      <li><strong>Simpul pertama menunjuk dirinya sendiri:</strong> saat list kosong, <code>tambah()</code> mengatur <code>head.nextNode = head</code>.</li>
+      <li><strong>Traversal berhenti</strong> saat <code>ptr.nextNode == head</code> — bukan <code>None</code>!</li>
+      <li><strong>Pencarian gagal</strong> terdeteksi saat <code>tmp</code> kembali ke <code>head</code> (sudah satu putaran penuh).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>Perbedaan dengan Single LL — Hanya di 3 Titik</h2>
+    <pre class="code"><span class="cm"># 1) tambah simpul pertama</span>
+if self.head == None:
+    self.head = baru
+    self.head.nextNode = self.head     <span class="cm"># menunjuk diri sendiri</span>
+
+<span class="cm"># 2) kondisi gagal pada telusuri</span>
+while tmp.element != cari:
+    tmp = tmp.nextNode
+    if tmp == self.head: return None   <span class="cm"># satu putaran penuh</span>
+
+<span class="cm"># 3) kondisi berhenti saat menampilkan</span>
+while not akhir:
+    print(ptr.element)
+    if ptr.nextNode == LL1.head:       <span class="cm"># bukan == None</span>
+        akhir = True
+    else:
+        ptr = ptr.nextNode</pre>
+    <div class="note"><b>Jebakan klasik:</b> memakai kondisi <code>nextNode == None</code> pada circular LL menyebabkan <strong>infinite loop</strong>, karena tidak ada simpul yang pernah menunjuk None.</div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Pola Soal</div>
+    <h2>Soal 3 = Soal 1 dengan Kondisi Berbeda</h2>
+    <p>Semua operasi B–G pada soal 3 menghasilkan isi yang sama dengan soal 1. Yang berubah:</p>
+    <table class="tbl">
+      <tr><th>Aspek</th><th>Single LL</th><th>Circular LL</th></tr>
+      <tr><td>Akhir rantai</td><td class="mono">tail.nextNode = None</td><td class="mono">tail.nextNode = head</td></tr>
+      <tr><td>Stop tampil</td><td class="mono">ptr.nextNode == None</td><td class="mono">ptr.nextNode == head</td></tr>
+      <tr><td>Hapus head</td><td>head pindah ke next</td><td>head pindah ke next <strong>dan</strong> tail harus tetap menunjuk head baru</td></tr>
+      <tr><td>Sisip sebelum head</td><td>jadikan head baru</td><td>jadikan head baru + perbarui pointer simpul terakhir</td></tr>
+    </table>
+    <div class="tip"><strong>Saat hapus 50 (head) di soal 3B:</strong> setelah <code>head</code> dipindah ke 93, simpul terakhir (38) masih menunjuk simpul 50 yang lama — pointer <code>38.nextNode</code> harus diarahkan ulang ke head baru. Inilah detail yang membedakan jawaban benar dan salah.</div>
+  </div>
+</section>
+<!-- ================= TAB 4 : STACK ================= -->
+<section class="panel" id="t4">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Stack — LIFO (Last In, First Out)</h2>
+    <p>Seperti tumpukan piring: yang <strong>terakhir ditaruh</strong> adalah yang <strong>pertama diambil</strong>. Semua aktivitas terjadi di satu ujung saja, yaitu <code>top</code>.</p>
+    <table class="tbl">
+      <tr><th>Operasi</th><th>Arti</th><th>Efek pada top</th></tr>
+      <tr><td class="mono">push(el)</td><td>menambah elemen di puncak</td><td class="mono">top = top + 1</td></tr>
+      <tr><td class="mono">pop()</td><td>mengambil <strong>dan menghapus</strong> elemen puncak</td><td class="mono">top = top - 1</td></tr>
+      <tr><td class="mono">topEl()</td><td>melihat elemen puncak <strong>tanpa menghapus</strong></td><td>tetap</td></tr>
+      <tr><td class="mono">isEmpty()</td><td>cek kosong</td><td class="mono">top == -1</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>Stack Berbasis Array</h2>
+    <pre class="code">class recPool:                    <span class="cm"># versi array</span>
+    def __init__(self, dat, maxSize, top):
+        self.dat = dat
+        for i in range(maxSize): self.dat.append(0)
+        self.maxSize = maxSize
+        self.top = -1             <span class="cm"># -1 = kosong</span>
+    def isEmpty(self): return self.top == -1
+    def topEl(self):   return self.dat[self.top]
+    def pop(self):
+        if self.top > -1:
+            temp = self.dat[self.top]
+            self.top -= 1
+            return temp
+    def push(self, el):
+        if self.top + 1 < self.maxSize:   <span class="cm"># cek penuh</span>
+            self.top += 1
+            self.dat[self.top] = el</pre>
+    <p>Versi <strong>linked list</strong> (LLStack) tidak punya batas penuh; <code>push</code> cukup: <code>baru.nextNode = top; top = baru</code> dan kosong dicek dengan <code>top == None</code>.</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Trace Soal 5</div>
+    <h2>Latihan UAS No. 5 — Langkah demi Langkah</h2>
+    <h3>5B — pisahkan kelipatan 2</h3>
+    <p>Push berurutan dari array. Kelipatan 2 &rarr; stack1: 50, 36, 72, 78, 100, 18, 38. Bukan &rarr; stack2: 93, 85, 25. <strong>Ditampilkan dari top</strong>, jadi urutan terbalik:</p>
+    <pre class="term"><span class="lbl">stack1:</span> [38, 18, 100, 78, 72, 36, 50]
+<span class="lbl">stack2:</span> [25, 85, 93]</pre>
+    <h3>5C — pop, jumlahkan dengan top, push</h3>
+    <p><code>pop(stack2)</code> = 25 &rarr; top stack2 sekarang 85 &rarr; 25 + 85 = <strong>110</strong> &rarr; <code>push(110)</code> ke stack1:</p>
+    <pre class="term"><span class="lbl">stack1:</span> [110, 38, 18, 100, 78, 72, 36, 50]
+<span class="lbl">stack2:</span> [85, 93]</pre>
+    <h3>5D — pop semua stack1, kurangi 5, push ke stack2</h3>
+    <p>Pop berurutan: 110, 38, 18, 100, 78, 72, 36, 50 &rarr; dikurangi 5: 105, 33, 13, 95, 73, 67, 31, 45 &rarr; di-push satu per satu ke stack2 (45 dipush terakhir &rarr; jadi top):</p>
+    <pre class="term"><span class="lbl">stack2:</span> [45, 31, 67, 73, 95, 13, 33, 105, 85, 93]</pre>
+    <div class="tip"><strong>Pola penting:</strong> memindahkan isi stack ke stack lain <strong>membalik urutan</strong>. Pindahkan dua kali = urutan kembali seperti semula.</div>
+  </div>
+</section>
+
+<!-- ================= TAB 5 : QUEUE ================= -->
+<section class="panel" id="t5">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Queue — FIFO (First In, First Out)</h2>
+    <p>Seperti antrean kasir: yang <strong>pertama datang</strong> dilayani <strong>pertama</strong>. Elemen masuk lewat belakang (<code>last</code>) dan keluar lewat depan (<code>first</code>).</p>
+    <table class="tbl">
+      <tr><th>Operasi</th><th>Arti</th><th>Ujung yang dipakai</th></tr>
+      <tr><td class="mono">enQueue(el)</td><td>menambah elemen</td><td class="mono">last (belakang)</td></tr>
+      <tr><td class="mono">deQueue()</td><td>mengambil &amp; menghapus elemen</td><td class="mono">first (depan)</td></tr>
+      <tr><td class="mono">firstEl()</td><td>melihat elemen terdepan tanpa menghapus</td><td class="mono">first</td></tr>
+      <tr><td class="mono">isEmpty()</td><td>cek kosong</td><td class="mono">first == -1</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>Queue Array yang Sirkular — Kenapa?</h2>
+    <p>Setiap <code>deQueue</code> menggeser <code>first</code> maju, meninggalkan slot kosong di depan array. Tanpa trik, queue akan "penuh palsu" padahal slot depannya kosong. Solusinya: saat <code>first</code> atau <code>last</code> melewati ujung array (<code>maxSize - 1</code>), pointer <strong>melingkar kembali ke indeks 0</strong>.</p>
+    <pre class="code">def deQueue(self):
+    temp = self.dat[self.first]
+    if self.first == self.last:        <span class="cm"># elemen terakhir diambil</span>
+        self.first = -1; self.last = -1
+    elif self.first == self.maxSize-1:
+        self.first = 0                 <span class="cm"># melingkar!</span>
+    else:
+        self.first += 1
+    return temp
+
+def enQueue(self, el):
+    if self.first == -1:               <span class="cm"># queue kosong</span>
+        self.first = 0; self.last = 0
+    elif self.last == self.maxSize-1:
+        self.last = 0                  <span class="cm"># melingkar!</span>
+    else:
+        self.last += 1
+    self.dat[self.last] = el</pre>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Trace Soal 4</div>
+    <h2>Latihan UAS No. 4 — Langkah demi Langkah</h2>
+    <h3>4B — pisahkan ganjil/genap</h3>
+    <p>Urutan masuk dipertahankan (FIFO):</p>
+    <pre class="term"><span class="lbl">queue1:</span> [93, 85, 25]
+<span class="lbl">queue2:</span> [50, 36, 72, 78, 100, 18, 38]</pre>
+    <h3>4C — deQueue queue2 + elemen terakhir queue2</h3>
+    <p><code>deQueue(queue2)</code> = <strong>50</strong> (elemen terdepan) &rarr; elemen terakhir queue2 = <strong>38</strong> &rarr; 50 + 38 = <strong>88</strong> &rarr; <code>enQueue(88)</code> ke queue1:</p>
+    <pre class="term"><span class="lbl">queue1:</span> [93, 85, 25, 88]
+<span class="lbl">queue2:</span> [36, 72, 78, 100, 18, 38]</pre>
+    <h3>4D — deQueue semua queue1 &times;2, enQueue ke queue2</h3>
+    <div class="note"><b>Perhatikan output yang diminta!</b> Output 4D menunjukkan queue2 masih berawalan 50 — artinya soal D dikerjakan <strong>dari kondisi 4B</strong> (bukan lanjutan 4C). queue1 = [93, 85, 25] &rarr; dikali 2: 186, 170, 50 &rarr; masuk ke belakang queue2.</div>
+    <pre class="term"><span class="lbl">queue2:</span> [50, 36, 72, 78, 100, 18, 38, 186, 170, 50]</pre>
+    <div class="tip"><strong>Bandingkan dengan stack:</strong> memindahkan isi queue ke queue lain <strong>tidak mengubah urutan</strong> (FIFO), sedangkan stack membaliknya (LIFO). Ini sumber soal jebakan favorit.</div>
+  </div>
+</section>
+
+<!-- ================= TAB 6 : BST & TRAVERSAL ================= -->
+<section class="panel" id="t6">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Binary Search Tree (BST)</h2>
+    <p>Pohon biner dengan aturan tegas di setiap simpul: <strong>nilai lebih kecil &rarr; turun ke kiri; nilai lebih besar atau sama &rarr; turun ke kanan</strong>. Simpul pertama yang dimasukkan menjadi <code>root</code>.</p>
+    <pre class="code">def tambah(self, nilai):
+    baru = self.simpul(nilai)
+    if self.root == None:
+        self.root = baru; return
+    ptr = self.root
+    while True:                       <span class="cm"># turun sampai menemukan tempat kosong</span>
+        induk = ptr
+        if nilai < ptr.nilai: ptr = ptr.left
+        else:                 ptr = ptr.right
+        if ptr == None: break
+    if nilai < induk.nilai: induk.left = baru
+    else:                   induk.right = baru
+    baru.induk = induk</pre>
+    <h3>BST dari data UAS [50, 93, 36, 72, 78, 100, 85, 18, 25, 38]</h3>
+    <pre class="term">            50
+          /    \
+        36      93
+       /  \    /  \
+     18   38  72   100
+       \        \
+        25       78
+                   \
+                    85</pre>
+    <p>Coba telusuri sendiri: 85 masuk lewat jalur 50 &rarr; 93 (kiri, karena 85&lt;93) &rarr; 72 (kanan) &rarr; 78 (kanan) &rarr; jadi <strong>anak kanan 78</strong>.</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Kode Kunci</div>
+    <h2>Tiga Traversal — Bedanya Hanya Posisi "print"</h2>
+    <div class="grid2">
+      <div>
+        <h3>In-Order (kiri &rarr; root &rarr; kanan)</h3>
+        <pre class="code">def inOrder(self, t):
+    if t.left:  self.inOrder(t.left)
+    print(t.nilai)          <span class="cm"># tengah</span>
+    if t.right: self.inOrder(t.right)</pre>
+        <p>Hasil BST selalu <strong>terurut menaik</strong>:</p>
+        <pre class="term">[18, 25, 36, 38, 50, 72, 78, 85, 93, 100]</pre>
+      </div>
+      <div>
+        <h3>Pre-Order (root &rarr; kiri &rarr; kanan)</h3>
+        <pre class="code">def preOrder(self, t):
+    print(t.nilai)          <span class="cm"># awal</span>
+    if t.left:  self.preOrder(t.left)
+    if t.right: self.preOrder(t.right)</pre>
+        <p>Root selalu muncul <strong>pertama</strong>. Berguna untuk menyalin/menyimpan struktur pohon.</p>
+      </div>
+    </div>
+    <h3>Post-Order (kiri &rarr; kanan &rarr; root)</h3>
+    <pre class="code">def postOrder(self, t):
+    if t.left:  self.postOrder(t.left)
+    if t.right: self.postOrder(t.right)
+    print(t.nilai)          <span class="cm"># akhir — root selalu muncul TERAKHIR</span></pre>
+    <div class="tip"><strong>Trik hafalan:</strong> "in/pre/post" menunjuk posisi <em>root</em> dibaca — <strong>pre</strong> = root duluan, <strong>in</strong> = root di tengah, <strong>post</strong> = root paling akhir. Anak kiri selalu dikunjungi sebelum anak kanan di ketiganya.</div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Konsep Pendukung</div>
+    <h2>Suksesor &amp; Predesesor — Modal untuk Delete</h2>
+    <ul class="poin">
+      <li><strong>Suksesor</strong> = simpul <em>paling kiri dari anak kanan</em> (<code>cariMostLeftAnakKanan</code>) — penerus terdekat yang lebih besar.</li>
+      <li><strong>Predesesor</strong> = simpul <em>paling kanan dari anak kiri</em> (<code>cariMostRightAnakKiri</code>) — pendahulu terdekat yang lebih kecil.</li>
+      <li>Contoh pada BST UAS: suksesor dari root 50 = turun ke 93 lalu terus ke kiri: 93 &rarr; 72 &rarr; (72 tidak punya anak kiri) = <strong>72</strong>.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= TAB 7 : DELETE BST ================= -->
+<section class="panel" id="t7">
+  <div class="card">
+    <div class="kicker">Konsep</div>
+    <h2>Menghapus Simpul BST: 3 Kasus Dasar</h2>
+    <table class="tbl">
+      <tr><th>Kasus</th><th>Cara menangani</th></tr>
+      <tr><td><strong>Leaf</strong> (tanpa anak)</td><td>putuskan dari induk: <code>induk.left/right = None</code></td></tr>
+      <tr><td><strong>1 anak</strong></td><td>anak naik menggantikan: induk langsung menunjuk anak</td></tr>
+      <tr><td><strong>2 anak</strong></td><td>perlu strategi khusus &rarr; <strong>delete by copying</strong> atau <strong>delete by merging</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Strategi 1</div>
+    <h2>Delete by Copying — "Salin nilainya"</h2>
+    <ul class="poin">
+      <li>Cari <strong>suksesor</strong> (paling kiri dari anak kanan).</li>
+      <li><strong>Salin nilai suksesor</strong> ke simpul yang dihapus — simpulnya tetap di tempat, hanya isinya berganti.</li>
+      <li>Hapus simpul suksesor yang asli (maksimal punya 1 anak kanan, mudah dilepas).</li>
+    </ul>
+    <pre class="code">def deleteByCopying(self, simpul):
+    suksesor = self.cariMostLeftAnakKanan(simpul.right)
+    simpul.nilai = suksesor.nilai        <span class="cm"># SALIN nilai</span>
+    if suksesor == simpul.right:         <span class="cm"># suksesor anak kanan langsung</span>
+        simpul.right = suksesor.right
+    else:                                <span class="cm"># suksesor jauh di kiri bawah</span>
+        suksesor.induk.left = suksesor.right</pre>
+    <p><strong>Sifat:</strong> bentuk pohon hampir tidak berubah; aman dan sederhana, termasuk saat menghapus root (root-nya tetap, isinya yang baru).</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Strategi 2</div>
+    <h2>Delete by Merging — "Gabungkan subtree"</h2>
+    <ul class="poin">
+      <li><strong>Anak kanan menjadi pewaris</strong> — menggantikan posisi simpul yang dihapus.</li>
+      <li>Seluruh <strong>anak kiri dicangkokkan</strong> menjadi anak kiri dari suksesor (simpul paling kiri di subtree kanan).</li>
+      <li>Jika yang dihapus root, pewaris menjadi root baru.</li>
+    </ul>
+    <pre class="code">def deleteByMerging(self, simpul):
+    pewaris = simpul.right               <span class="cm"># anak kanan naik</span>
+    if simpul.left != None:
+        suksesor = self.cariMostLeftAnakKanan(simpul.right)
+        suksesor.left = simpul.left      <span class="cm"># cangkok anak kiri</span>
+    if simpul == self.root:
+        self.root = pewaris
+    elif simpul.induk.right == simpul:
+        simpul.induk.right = pewaris
+    else:
+        simpul.induk.left = pewaris</pre>
+    <p><strong>Sifat:</strong> bentuk pohon berubah signifikan (cenderung memanjang/tidak seimbang), tetapi tanpa menyalin nilai.</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Bandingkan</div>
+    <h2>Copying vs Merging dalam Satu Tabel</h2>
+    <table class="tbl">
+      <tr><th></th><th>Delete by Copying</th><th>Delete by Merging</th></tr>
+      <tr><td>Yang berpindah</td><td><strong>nilai</strong> suksesor disalin</td><td><strong>simpul/subtree</strong> dipindah</td></tr>
+      <tr><td>Simpul target</td><td>tetap ada, isinya berganti</td><td>benar-benar dilepas dari pohon</td></tr>
+      <tr><td>Bentuk pohon</td><td>nyaris tidak berubah</td><td>berubah besar, bisa makin tinggi</td></tr>
+      <tr><td>Hapus root</td><td>mudah (root tetap, nilai berganti)</td><td>root baru = anak kanan (pewaris)</td></tr>
+    </table>
+    <div class="note"><b>Pada soal UAS 6C &amp; 6D:</b> hapus 93 memakai <em>merging</em>, hapus 50 memakai <em>copying</em>. Trace lengkapnya ada di tab <strong>Pembahasan UAS</strong>.</div>
+  </div>
+</section>
+<!-- ================= TAB 8 : PEMBAHASAN UAS ================= -->
+<section class="panel" id="t8">
+  <div class="card">
+    <div class="kicker">Soal 1 / 2 / 3</div>
+    <h2>Linked List (Single, Double, Circular) — Isi di Setiap Langkah</h2>
+    <p>Ketiga soal memakai operasi yang sama, jadi <strong>isi list-nya identik</strong>. Yang membedakan penilaian adalah implementasi struktur (lihat tab masing-masing). Hafalkan alur perubahan ini:</p>
+    <table class="tbl">
+      <tr><th>Langkah</th><th>Operasi</th><th class="mono">Isi list setelahnya</th></tr>
+      <tr><td class="mono">A</td><td>bangun dari array</td><td class="mono">[50, 93, 36, 72, 78, 100, 85, 18, 25, 38]</td></tr>
+      <tr><td class="mono">B</td><td>hapus 50 <em>(hapus head!)</em></td><td class="mono">[93, 36, 72, 78, 100, 85, 18, 25, 38]</td></tr>
+      <tr><td class="mono">C</td><td>hapus 78 <em>(tengah)</em></td><td class="mono">[93, 36, 72, 100, 85, 18, 25, 38]</td></tr>
+      <tr><td class="mono">D</td><td>hapus 38 <em>(tail)</em></td><td class="mono">[93, 36, 72, 100, 85, 18, 25]</td></tr>
+      <tr><td class="mono">E</td><td>tambah 69 <strong>sebelum</strong> 93 <em>(jadi head baru!)</em></td><td class="mono">[69, 93, 36, 72, 100, 85, 18, 25]</td></tr>
+      <tr><td class="mono">F</td><td>tambah 1 <strong>setelah</strong> 25 <em>(tail baru)</em></td><td class="mono">[69, 93, 36, 72, 100, 85, 18, 25, 1]</td></tr>
+      <tr><td class="mono">G</td><td>tambah 67 <strong>di antara</strong> 100 dan 85</td><td class="mono">[69, 93, 36, 72, 100, 67, 85, 18, 25, 1]</td></tr>
+    </table>
+    <div class="note"><b>Tiga momen kritis:</b> (B) hapus head &rarr; head pindah ke 93; (E) sisip sebelum head &rarr; 69 menjadi head baru; di circular, keduanya menuntut pointer simpul terakhir ikut diperbarui.</div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Soal 4</div>
+    <h2>Queue Ganjil/Genap</h2>
+    <p><strong>4B</strong> — ganjil ke queue1, genap ke queue2 (urutan masuk dipertahankan):</p>
+    <pre class="term"><span class="lbl">queue1:</span> [93, 85, 25]
+<span class="lbl">queue2:</span> [50, 36, 72, 78, 100, 18, 38]</pre>
+    <p><strong>4C</strong> — <code>deQueue(queue2)</code> = 50; elemen terakhir queue2 = 38; 50+38 = 88 &rarr; <code>enQueue</code> ke queue1:</p>
+    <pre class="term"><span class="lbl">queue1:</span> [93, 85, 25, 88]
+<span class="lbl">queue2:</span> [36, 72, 78, 100, 18, 38]</pre>
+    <p><strong>4D</strong> — output yang diminta berawalan 50, artinya dikerjakan <strong>dari kondisi 4B</strong>: queue1 [93, 85, 25] dikali 2 &rarr; 186, 170, 50 &rarr; enQueue ke queue2:</p>
+    <pre class="term"><span class="lbl">queue2:</span> [50, 36, 72, 78, 100, 18, 38, 186, 170, 50]</pre>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Soal 5</div>
+    <h2>Stack Kelipatan 2</h2>
+    <p><strong>5B</strong> — kelipatan 2 di-push ke stack1 (50, 36, 72, 78, 100, 18, 38), sisanya ke stack2 (93, 85, 25). Tampil dari top &rarr; terbalik:</p>
+    <pre class="term"><span class="lbl">stack1:</span> [38, 18, 100, 78, 72, 36, 50]
+<span class="lbl">stack2:</span> [25, 85, 93]</pre>
+    <p><strong>5C</strong> — pop stack2 = 25; top stack2 = 85; 25+85 = 110 &rarr; push ke stack1:</p>
+    <pre class="term"><span class="lbl">stack1:</span> [110, 38, 18, 100, 78, 72, 36, 50]
+<span class="lbl">stack2:</span> [85, 93]</pre>
+    <p><strong>5D</strong> — lanjut dari 5C: pop semua stack1 (110, 38, 18, 100, 78, 72, 36, 50), kurangi 5 (105, 33, 13, 95, 73, 67, 31, 45), push satu per satu ke stack2 — yang dipush terakhir (45) menjadi top:</p>
+    <pre class="term"><span class="lbl">stack2:</span> [45, 31, 67, 73, 95, 13, 33, 105, 85, 93]</pre>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Soal 6</div>
+    <h2>BST: Traversal &amp; Dua Cara Delete</h2>
+    <p><strong>6B — In-order</strong> (selalu terurut menaik):</p>
+    <pre class="term">[18, 25, 36, 38, 50, 72, 78, 85, 93, 100]</pre>
+    <p><strong>6C — Hapus 93 (delete by merging)</strong>: 93 punya dua anak (kiri = subtree 72, kanan = 100). Pewaris = <strong>100</strong> naik menggantikan 93 (jadi anak kanan 50). Suksesor = paling kiri dari anak kanan = 100 sendiri &rarr; subtree 72 dicangkok menjadi <strong>anak kiri 100</strong>. Pre-order hasilnya:</p>
+    <pre class="term">          50
+        /    \
+      36      100
+     /  \     /
+   18   38  72
+     \        \
+      25       78
+                 \
+                  85
+
+pre-order: [50, 36, 18, 25, 38, 100, 72, 78, 85]</pre>
+    <p><strong>6D — Hapus 50 (delete by copying)</strong>: suksesor dari 50 = paling kiri dari anak kanan (100) &rarr; turun: 100 &rarr; 72 (tidak punya kiri) = <strong>72</strong>. Nilai 72 <strong>disalin ke root</strong>; simpul 72 asli dilepas, anak kanannya (78) naik menjadi anak kiri 100. Post-order hasilnya:</p>
+    <pre class="term">          72        &#8592; root berganti NILAI (simpulnya sama)
+        /    \
+      36      100
+     /  \     /
+   18   38  78
+     \        \
+      25       85
+
+post-order: [25, 18, 38, 36, 85, 78, 100, 72]</pre>
+    <div class="tip"><strong>Cek cepat post-order:</strong> elemen terakhir post-order selalu <strong>root</strong>. Di output diminta angka terakhirnya 72 — cocok dengan root baru.</div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">Soal 7</div>
+    <h2>Kuadrat Sempurna — Bebas Pilih Struktur</h2>
+    <p>"Habis diakar pangkat 2" = <strong>kuadrat sempurna</strong>: dari data, hanya <code>100 (10&sup2;)</code>, <code>36 (6&sup2;)</code>, <code>25 (5&sup2;)</code>. Sisanya bukan.</p>
+    <p><strong>Strategi elegan (BST + stack):</strong></p>
+    <ul class="poin">
+      <li>Masukkan kuadrat sempurna ke <strong>BST pertama</strong>, sisanya ke <strong>BST kedua</strong>. Cek dengan <code>int(x**0.5)**2 == x</code>.</li>
+      <li>BST kedua: in-order langsung menghasilkan <strong>ascending</strong>.</li>
+      <li>BST pertama: in-order &rarr; push tiap nilai ke <strong>stack</strong> &rarr; pop semua = <strong>descending</strong> (stack membalik urutan).</li>
+    </ul>
+    <pre class="term"><span class="lbl">habis diakar pangkat 2:</span> [100, 36, 25]
+<span class="lbl">tidak habis diakar pangkat 2:</span> [18, 38, 50, 72, 78, 85, 93]</pre>
+  </div>
+</section>
+
+<!-- ================= TAB 9 : KUIS ================= -->
+<section class="panel" id="t9">
+  <div class="quiz-top">
+    <div class="score" id="scoreText">Skor: 0/50 &middot; Terjawab: 0/50</div>
+    <div class="bar"><i id="scoreBar"></i></div>
+    <button class="btn-reset" id="btnReset">&#8635; Ulangi Kuis</button>
+  </div>
+  <div id="quizArea"></div>
+  <div class="final" id="finalBox">
+    <div style="font-family:var(--mono);font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:#b9b4ff;margin-bottom:6px">Hasil Akhir</div>
+    <div class="big" id="finalScore">0/50</div>
+    <p id="finalMsg" style="margin-top:8px;color:#dfe1ff"></p>
+  </div>
+</section>
+
+</main>
+<footer>panduan belajar uas &middot; struktur data &amp; algoritma &middot; semoga sukses, clo! &#128640;</footer>
+<script>
+// ===== Navigasi Tab =====
+const tabBtns = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.panel');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0});
+  });
+});
+
+// ===== Data Kuis (50 soal, kunci: A=13, B=13, C=12, D=12) =====
+const SOAL = [
+{q:"Setiap simpul (node) pada single linked list minimal terdiri dari...",o:["data (element) dan pointer ke simpul berikutnya (nextNode)","data dan pointer ke simpul sebelumnya saja","data, indeks array, dan ukuran maksimum","pointer head dan pointer tail"],a:0,e:"Simpul single LL hanya butuh dua hal: isi data dan satu pointer maju (nextNode)."},
+{q:"Pointer head pada linked list berfungsi untuk...",o:["menunjuk simpul terakhir","menunjuk simpul pertama dalam rantai","menyimpan jumlah simpul","menunjuk simpul yang sedang ditelusuri"],a:1,e:"head adalah pintu masuk rantai — selalu menunjuk simpul pertama. Penunjuk yang berjalan saat menelusuri biasanya ptr/tmp."},
+{q:"Linked list dinyatakan KOSONG jika...",o:["nextNode == None","ptr == None","head == None","element == 0"],a:2,e:"Tidak ada simpul pertama berarti tidak ada rantai sama sekali: head == None."},
+{q:"Pada single linked list, penelusuran (traversal) berhenti ketika...",o:["ptr.element == head.element","ptr == head","ptr.nextNode == head","ptr.nextNode == None (simpul terakhir tercapai)"],a:3,e:"Simpul terakhir single LL menunjuk None. Kondisi nextNode == head adalah milik circular LL."},
+{q:"Pada kelas singleLL contoh dosen, sebelum memanggil tambah() untuk menyisip di tengah, yang WAJIB dilakukan adalah...",o:["mengarahkan ptr ke simpul tepat sebelum posisi sisip","mengosongkan head terlebih dahulu","memanggil hapus() terlebih dahulu","menghitung panjang list"],a:0,e:"Method tambah() menyisipkan simpul baru tepat setelah ptr — jadi ptr harus diarahkan dulu ke simpul sebelum posisi yang diinginkan."},
+{q:"Urutan dua baris yang BENAR untuk menyisip simpul baru setelah ptr adalah...",o:["ptr.nextNode = baru; baru.nextNode = ptr.nextNode","baru.nextNode = ptr.nextNode; ptr.nextNode = baru","baru.nextNode = ptr; ptr = baru","ptr = baru.nextNode; baru = ptr.nextNode"],a:1,e:"baru harus 'memegang' penerus ptr dulu. Kalau ptr.nextNode ditimpa duluan, alamat sisa rantai hilang dan list terputus."},
+{q:"Saat menghapus simpul pada single linked list, ptr harus diarahkan ke...",o:["simpul yang akan dihapus","simpul setelah simpul yang dihapus","simpul tepat SEBELUM simpul yang dihapus","head, lalu langsung del"],a:2,e:"Karena single LL tidak punya prevNode, satu-satunya cara melompati target adalah dari simpul sebelumnya: ptr.nextNode = ptr.nextNode.nextNode."},
+{q:"Kelemahan utama single linked list dibanding double linked list adalah...",o:["tidak bisa ditelusuri mundur (hanya satu arah)","tidak bisa menambah data baru","ukurannya tetap seperti array","tidak bisa menyimpan angka negatif"],a:0,e:"Tanpa prevNode, kita tidak pernah bisa kembali ke simpul sebelumnya tanpa menelusuri ulang dari head."},
+{q:"Array [50, 93, 36, ...] diubah ke single LL, lalu data 50 dihapus. Simpul yang menjadi head baru adalah...",o:["36","93","38","None"],a:1,e:"50 adalah head. Menghapus head berarti head dipindah ke simpul berikutnya: 93."},
+{q:"Untuk menambah 67 'di antara 100 dan 85' (soal 1G), ptr diarahkan ke simpul...",o:["85, lalu tambah(67)","head, lalu tambah(67)","38, lalu tambah(67)","100, lalu tambah(67)"],a:3,e:"Sisip selalu jatuh setelah ptr. 'Di antara 100 dan 85' = 'setelah 100', jadi ptr = telusuri(100)."},
+{q:"Pembeda utama simpul double linked list dari single linked list adalah...",o:["punya dua pointer: nextNode dan prevNode","punya dua data dalam satu simpul","tidak memerlukan head","selalu terurut otomatis"],a:0,e:"DLL menambah satu pointer mundur (prevNode) sehingga rantai bisa dijalani dua arah."},
+{q:"Pada kelas dobelLL, pemanggilan tambah(element, maju=False) berarti...",o:["menambah di akhir list","menghapus simpul sebelum ptr","menyisipkan simpul baru SEBELUM simpul yang ditunjuk ptr","membalik arah seluruh list"],a:2,e:"maju=True menyisip setelah ptr; maju=False menyisip sebelum ptr — fitur yang memudahkan soal 'tambah X sebelum Y'."},
+{q:"Cara benar menghapus head pada double linked list (head punya penerus) adalah...",o:["head.prevNode = head.nextNode","head = head.nextNode lalu head.prevNode = None","head.nextNode = None lalu del head","ptr = head lalu ptr.nextNode = head"],a:1,e:"Head pindah ke simpul kedua, lalu prevNode head baru harus dikosongkan agar tidak menunjuk simpul yang sudah dihapus."},
+{q:"Berapa pointer yang diperbarui saat menyisipkan simpul di TENGAH double linked list?",o:["1","2","3","4"],a:3,e:"Empat: next & prev milik simpul baru, plus nextNode milik simpul kiri dan prevNode milik simpul kanan."},
+{q:"Keuntungan utama double linked list adalah...",o:["lebih hemat memori daripada single LL","bisa ditelusuri dua arah dan mudah menyisip/hapus di sekitar simpul mana pun","tidak memerlukan pointer sama sekali","datanya otomatis terurut menaik"],a:1,e:"prevNode membuka traversal mundur. Konsekuensinya justru butuh memori lebih (satu pointer ekstra per simpul)."},
+{q:"Soal 2E (tambah 69 sebelum 93) paling praktis di double LL karena...",o:["cukup telusuri(93) lalu panggil tambah(69, False)","harus menelusuri simpul sebelum 93 secara manual","69 otomatis menjadi tail","DLL tidak mengizinkan sisip sebelum head"],a:0,e:"maju=False menyisip langsung di depan ptr tanpa mencari simpul sebelumnya — keunggulan khas DLL."},
+{q:"Ciri khas circular linked list adalah...",o:["setiap simpul punya prevNode","head selalu berisi data terbesar","simpul terakhir menunjuk kembali ke head","nextNode simpul terakhir bernilai None"],a:2,e:"Rantai melingkar: tail.nextNode == head, sehingga tidak ada simpul yang menunjuk None."},
+{q:"Penelusuran untuk MENAMPILKAN seluruh isi circular LL berhenti ketika...",o:["ptr.nextNode == head","ptr.nextNode == None","ptr.element == head.element","ptr == None"],a:0,e:"Karena tidak ada None, patokan berhenti adalah saat pointer akan kembali ke head (satu putaran penuh)."},
+{q:"Saat menambah simpul PERTAMA pada circularLL, kode yang dijalankan adalah...",o:["head.nextNode = None","head = None","ptr.nextNode = head","head = baru lalu head.nextNode = head (menunjuk diri sendiri)"],a:3,e:"Satu simpul pun harus membentuk lingkaran — jadi ia menunjuk dirinya sendiri."},
+{q:"Pada telusuri() circular LL, data dinyatakan TIDAK ADA jika...",o:["tmp.nextNode == None","tmp kembali sampai ke head setelah berputar","tmp.element lebih besar dari data dicari","head == tmp.nextNode"],a:1,e:"Kembali ke head berarti seluruh lingkaran sudah diperiksa tanpa menemukan data."},
+{q:"Jika traversal circular LL keliru memakai kondisi 'nextNode == None', yang terjadi adalah...",o:["program langsung berhenti di head","hanya simpul pertama yang tercetak","perulangan tak berhingga (infinite loop)","data tercetak terbalik"],a:2,e:"Tidak ada simpul circular yang menunjuk None, jadi kondisi berhenti tidak pernah terpenuhi."},
+{q:"Prinsip kerja STACK adalah...",o:["FIFO — pertama masuk pertama keluar","LIFO — terakhir masuk pertama keluar","prioritas nilai terbesar dulu","acak sesuai indeks"],a:1,e:"Stack seperti tumpukan piring: yang terakhir ditumpuk diambil paling dulu (Last In, First Out)."},
+{q:"Operasi untuk MENAMBAH elemen ke stack disebut...",o:["push","pop","enQueue","insert"],a:0,e:"push menaruh elemen baru di puncak (top). pop kebalikannya: mengambil dari puncak."},
+{q:"Perbedaan pop() dan topEl() pada stack adalah...",o:["pop hanya melihat, topEl menghapus","keduanya sama persis","topEl mengambil dari dasar stack","pop mengambil DAN menghapus elemen puncak; topEl hanya melihat tanpa menghapus"],a:3,e:"topEl = 'mengintip'. pop = mengambil sekaligus mengeluarkan dari stack (top berkurang 1)."},
+{q:"Stack berbasis array dinyatakan KOSONG jika...",o:["dat[0] == 0","maxSize == 0","top == -1","top == maxSize"],a:2,e:"Konvensi kode dosen: top diinisialisasi -1; selama belum ada push, top tetap -1."},
+{q:"Stack berbasis array dinyatakan PENUH jika...",o:["top + 1 == maxSize","top == -1","top == 0","dat sudah terisi angka semua"],a:0,e:"Indeks puncak maksimal adalah maxSize-1. Jika top+1 sudah mencapai maxSize, tidak ada slot lagi untuk push."},
+{q:"Soal 5B: stack1 berisi (dari top) [38, 18, 100, 78, 72, 36, 50]. Elemen yang keluar PERTAMA saat pop adalah...",o:["50","38","36","100"],a:1,e:"pop selalu mengambil dari top. 38 dipush terakhir sehingga berada di puncak."},
+{q:"Soal 5C: pop stack2 [25, 85, 93] lalu dijumlahkan dengan top element stack2 yang baru. Nilai yang di-push ke stack1 adalah...",o:["118 (25+93)","178 (85+93)","50 (25+25)","110 (25+85)"],a:3,e:"pop menghasilkan 25; setelah itu top stack2 adalah 85; 25 + 85 = 110."},
+{q:"Pada stack berbasis linked list (LLStack), operasi push dilakukan dengan...",o:["baru.nextNode = top lalu top = baru","top.nextNode = baru lalu baru = top","menelusuri sampai ujung lalu menyambung di belakang","baru.prevNode = top"],a:0,e:"Simpul baru langsung 'menindih' puncak lama — itulah mengapa push/pop LLStack selalu cepat (O(1))."},
+{q:"Prinsip kerja QUEUE adalah...",o:["LIFO — terakhir masuk pertama keluar","acak sesuai prioritas","FIFO — pertama masuk pertama keluar","elemen terbesar keluar lebih dulu"],a:2,e:"Queue seperti antrean kasir: First In, First Out."},
+{q:"Operasi deQueue mengambil elemen dari...",o:["belakang (last)","depan (first)","tengah antrean","posisi top"],a:1,e:"Masuk lewat belakang (enQueue di last), keluar lewat depan (deQueue di first)."},
+{q:"Queue berbasis array dinyatakan KOSONG jika...",o:["last == maxSize","dat[first] == 0","first == last","first == -1"],a:3,e:"Konvensi kode dosen: first dan last di-reset ke -1 saat kosong. first == last justru berarti tersisa tepat satu elemen."},
+{q:"Alasan utama queue berbasis array dibuat SIRKULAR adalah...",o:["agar slot bekas deQueue di depan array bisa dipakai kembali","agar data otomatis terurut","agar deQueue lebih cepat dari enQueue","agar tidak perlu variabel last"],a:0,e:"Tanpa melingkar, first terus maju dan slot depan terbuang — queue 'penuh palsu' padahal masih ada ruang."},
+{q:"Pada queue sirkular, jika first berada di indeks maxSize-1 lalu terjadi deQueue (queue belum kosong), maka first...",o:["menjadi -1","melingkar kembali ke indeks 0","tetap di maxSize-1","pindah ke posisi last"],a:1,e:"Inilah inti 'sirkular': pointer melompat dari ujung array kembali ke awal."},
+{q:"Soal 4B: data ganjil dari [50, 93, 36, 72, 78, 100, 85, 18, 25, 38] dimasukkan ke queue1. Isi queue1 adalah...",o:["[25, 85, 93]","[93, 25, 85]","[93, 85, 25]","[85, 93, 25]"],a:2,e:"Ganjil: 93, 85, 25 — dan queue mempertahankan urutan masuk (FIFO), tidak membaliknya."},
+{q:"Soal 4C: deQueue queue2 [50, 36, 72, 78, 100, 18, 38] lalu dijumlahkan dengan elemen TERAKHIR queue2. Nilai yang di-enQueue ke queue1 adalah...",o:["88 (50+38)","68 (50+18)","138 (100+38)","75 (50+25)"],a:0,e:"deQueue mengambil elemen terdepan = 50; elemen terakhir queue2 = 38; 50 + 38 = 88."},
+{q:"Pada queue berbasis linked list (LLQueue), enQueue menambah simpul di...",o:["depan (first)","tengah","posisi head","belakang (last), lalu last diarahkan ke simpul baru"],a:3,e:"last.nextNode = baru; last = baru. Jika kosong, first dan last sama-sama menunjuk simpul baru."},
+{q:"Aturan penyisipan pada Binary Search Tree (kode dosen) adalah...",o:["nilai kecil ke kanan, besar ke kiri","nilai lebih kecil turun ke kiri; lebih besar atau sama turun ke kanan","semua nilai ditambahkan sebagai anak kiri","disisipkan berurutan seperti array"],a:1,e:"Perbandingan dilakukan di tiap simpul dari root sampai menemukan posisi kosong: kiri < simpul <= kanan."},
+{q:"In-order traversal pada BST selalu menghasilkan...",o:["data terurut menaik (ascending)","data terurut menurun","urutan sesuai waktu input","root di posisi pertama"],a:0,e:"Kiri → root → kanan, dikombinasikan dengan aturan BST, otomatis mengurutkan data dari kecil ke besar."},
+{q:"Urutan kunjungan PRE-order traversal adalah...",o:["kiri → root → kanan","kiri → kanan → root","root → kiri → kanan","kanan → root → kiri"],a:2,e:"'Pre' = root dikunjungi paling awal, lalu subtree kiri, lalu kanan."},
+{q:"Urutan kunjungan POST-order traversal adalah...",o:["root → kiri → kanan","kiri → root → kanan","kanan → kiri → root","kiri → kanan → root (root paling akhir)"],a:3,e:"'Post' = root paling akhir. Konsekuensinya: elemen terakhir output post-order selalu root."},
+{q:"BST dibangun dari [50, 93, 36, 72, 78, 100, 85, 18, 25, 38]. Yang menjadi root adalah...",o:["18 (nilai terkecil)","50 (data pertama yang dimasukkan)","100 (nilai terbesar)","38 (data terakhir)"],a:1,e:"Root BST ditentukan urutan input, bukan besar-kecil nilai. 50 masuk pertama, jadi root."},
+{q:"Pada BST soal UAS, simpul 85 menjadi anak...",o:["kanan dari 78","kiri dari 93","kanan dari 100","kiri dari 72"],a:0,e:"Jalur 85: 50 → 93 (kiri, 85<93) → 72 (kanan, 85>72) → 78 (kanan, 85>78) → menempel sebagai anak kanan 78."},
+{q:"Hasil IN-order BST dari data UAS adalah...",o:["[50, 36, 18, 25, 38, 93, 72, 78, 85, 100]","[100, 93, 85, 78, 72, 50, 38, 36, 25, 18]","[18, 25, 36, 38, 50, 72, 78, 85, 93, 100]","[50, 93, 36, 72, 78, 100, 85, 18, 25, 38]"],a:2,e:"In-order BST = terurut menaik. Opsi A adalah pre-order; opsi D adalah urutan input."},
+{q:"Suksesor in-order (cariMostLeftAnakKanan) dari root 50 pada BST soal UAS adalah...",o:["93","100","78","72"],a:3,e:"Masuk ke anak kanan (93), lalu terus ke kiri sejauh mungkin: 93 → 72; 72 tak punya anak kiri, jadi suksesornya 72."},
+{q:"Inti dari DELETE BY COPYING adalah...",o:["menghapus seluruh subtree kanan","menyalin NILAI suksesor ke simpul yang dihapus, lalu melepas simpul suksesor","menukar simpul dengan root","menggabungkan anak kiri dan kanan menjadi satu list"],a:1,e:"Simpul targetnya tetap di tempat — hanya isinya diganti nilai suksesor. Struktur pohon nyaris tidak berubah."},
+{q:"Inti dari DELETE BY MERGING adalah...",o:["menyalin nilai predesesor ke simpul target","menghapus simpul beserta seluruh anaknya","anak kanan naik menjadi pewaris, dan anak kiri dicangkok menjadi anak kiri suksesor","memutar pohon ke kiri sampai seimbang"],a:2,e:"'Merging' = menggabungkan: subtree kiri digabungkan ke bawah suksesor (simpul paling kiri dari anak kanan)."},
+{q:"Setelah 93 dihapus dengan delete by MERGING, hasil PRE-order BST soal UAS adalah...",o:["[18, 25, 36, 38, 50, 72, 78, 85, 100]","[50, 36, 18, 25, 38, 72, 100, 78, 85]","[25, 18, 38, 36, 85, 78, 100, 50]","[50, 36, 18, 25, 38, 100, 72, 78, 85]"],a:3,e:"100 (pewaris) menggantikan 93 sebagai anak kanan 50, dan subtree 72 menjadi anak kiri 100. Pre-order: 50, 36, 18, 25, 38, 100, 72, 78, 85."},
+{q:"Setelah 50 dihapus dengan delete by COPYING (lanjutan 6C), nilai ROOT menjadi...",o:["100","36","72","78"],a:2,e:"Suksesor 50 adalah 72 (paling kiri dari anak kanan). Nilainya disalin ke simpul root — root tetap simpul yang sama, isinya kini 72."},
+{q:"Soal 7: bilangan dari data UAS yang 'habis diakar pangkat 2' (kuadrat sempurna) adalah...",o:["100, 36, 18","100, 50, 25","36, 25, 18","100, 36, 25"],a:3,e:"100 = 10², 36 = 6², 25 = 5². Sisanya (18, 38, 50, 72, 78, 85, 93) bukan kuadrat sempurna."}
+];
+
+// ===== Render & Logika Kuis =====
+const quizArea = document.getElementById('quizArea');
+const LET = ['A','B','C','D'];
+let answered = 0, benar = 0;
+
+function renderQuiz(){
+  answered = 0; benar = 0;
+  quizArea.innerHTML = '';
+  document.getElementById('finalBox').classList.remove('show');
+  SOAL.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = '<div class="q-no">Soal ' + (i+1) + ' / 50</div><div class="q-txt">' + s.q + '</div>';
+    s.o.forEach((opt, j) => {
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = '<span class="L">' + LET[j] + '.</span><span>' + opt + '</span>';
+      b.addEventListener('click', () => jawab(card, s, j));
+      card.appendChild(b);
+    });
+    const fb = document.createElement('div');
+    fb.className = 'feedback';
+    card.appendChild(fb);
+    quizArea.appendChild(card);
+  });
+  updateScore();
+}
+
+function jawab(card, s, pilih){
+  const opts = card.querySelectorAll('.opt');
+  if (opts[0].disabled) return;
+  opts.forEach((b, j) => {
+    b.disabled = true;
+    if (j === s.a) b.classList.add('correct');
+    else if (j === pilih) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  const fb = card.querySelector('.feedback');
+  const ok = pilih === s.a;
+  if (ok) benar++;
+  answered++;
+  fb.className = 'feedback show ' + (ok ? 'good' : 'bad');
+  fb.innerHTML = (ok ? '<strong>&#10003; Benar!</strong> ' : '<strong>&#10007; Kurang tepat.</strong> Jawaban: <strong>' + LET[s.a] + '</strong>. ') + s.e;
+  updateScore();
+  if (answered === SOAL.length) tampilFinal();
+}
+
+function updateScore(){
+  document.getElementById('scoreText').textContent = 'Skor: ' + benar + '/50 \u00B7 Terjawab: ' + answered + '/50';
+  document.getElementById('scoreBar').style.width = (answered / SOAL.length * 100) + '%';
+}
+
+function tampilFinal(){
+  const box = document.getElementById('finalBox');
+  document.getElementById('finalScore').textContent = benar + '/50';
+  let msg;
+  if (benar >= 45) msg = 'Luar biasa! Kamu sangat siap menghadapi UAS. \u{1F3C6}';
+  else if (benar >= 40) msg = 'Bagus sekali — tinggal poles sedikit di soal yang salah. \u{1F4AA}';
+  else if (benar >= 30) msg = 'Sudah cukup baik. Ulangi tab materi untuk topik yang masih keliru, lalu coba lagi.';
+  else msg = 'Jangan menyerah — pelajari ulang tab materi dan Pembahasan UAS, lalu ulangi kuisnya.';
+  document.getElementById('finalMsg').textContent = msg;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  renderQuiz();
+  window.scrollTo({top: 0});
+});
+
+renderQuiz();
+</script>
+</body>
+</html>
